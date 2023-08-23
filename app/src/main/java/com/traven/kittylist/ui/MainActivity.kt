@@ -23,7 +23,7 @@ class MainActivity : ComponentActivity() {
         val viewModel : MyViewModel by viewModels()
 
         setContent {
-            Greeting("Android")
+            MainScreen(viewModel)
         }
     }
 }

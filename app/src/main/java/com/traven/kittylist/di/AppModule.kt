@@ -1,7 +1,7 @@
 package com.traven.kittylist.di
 
 import com.traven.kittylist.domain.Repository
-import com.traven.kittylist.model.Const
+import com.traven.kittylist.Const
 import com.traven.kittylist.model.IApi
 import dagger.Module
 import dagger.Provides
