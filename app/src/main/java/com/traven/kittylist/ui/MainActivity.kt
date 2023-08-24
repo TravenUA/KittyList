@@ -1,18 +1,13 @@
 package com.traven.kittylist.ui
 
+import android.content.Context
+import android.net.ConnectivityManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.traven.kittylist.ui.theme.KittyListTheme
 import dagger.hilt.android.AndroidEntryPoint
+
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -23,7 +18,14 @@ class MainActivity : ComponentActivity() {
         val viewModel : MyViewModel by viewModels()
 
         setContent {
-            MainScreen(viewModel)
+            if (verifyAvailableNetwork()) MainScreen(viewModel)
+            else NoInternetScreen()
         }
+    }
+
+    private fun verifyAvailableNetwork():Boolean{
+        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkInfo=connectivityManager.activeNetworkInfo
+        return  networkInfo!=null && networkInfo.isConnected
     }
 }

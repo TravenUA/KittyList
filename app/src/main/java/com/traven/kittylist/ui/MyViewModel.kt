@@ -10,7 +10,6 @@ import com.traven.kittylist.model.dto.KittyDTO
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -23,49 +22,43 @@ class MyViewModel @Inject constructor(
     private val _pageSize: Int = 20
     private var _scrollPosition: Int = 0
 
-    val loadingState = mutableStateOf(true)
-    var error = false
+
+    var runtimeLoading = false
+    var errorState = mutableStateOf(false)
     val dataList = mutableStateListOf<KittyDTO>()
-
-
-/*    private val _mainData = MutableLiveData<List<KittyDTO>>()
-    val outData: LiveData<List<KittyDTO>> = _mainData*/
 
     init {
         getData()
     }
 
-    fun hasData() = dataList.isNotEmpty()
-
     fun updateScrollPosition(position: Int) {
         _scrollPosition = position
+        Log.d(TAG, "Scroll position is ${_scrollPosition}")
         checkLoadDataNecessary()
     }
 
     private fun checkLoadDataNecessary() {
-        val scrollCondition = (_scrollPosition + 3) >= _pageSize * _currentPage
+        val scrollCondition = (_scrollPosition + 2) >= dataList.size
 
-        if (scrollCondition && !loadingState.value) {
+        if (scrollCondition && !runtimeLoading) {
             _currentPage++
             getData()
+            Log.d(TAG, "Loading started at position ${_scrollPosition}")
         }
     }
 
     private fun getData() {
-        loadingState.value = true
-
+        runtimeLoading = true
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val response = repository.getList(_pageSize, _currentPage)
                 dataList.addAll(response)
-                error = false
+                errorState.value = false
             } catch (e: Exception) {
                 Log.d(TAG, "Request failed with ${e.message}")
-                error = true
+                errorState.value = true
             } finally {
-                withContext(Dispatchers.Main) {
-                    loadingState.value = false
-                }
+                runtimeLoading = false
             }
         }
     }
