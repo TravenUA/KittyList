@@ -1,11 +1,11 @@
-package com.traven.kittylist.model
+package com.traven.kittylist.domain
 
-import com.traven.kittylist.model.dto.KittyDTO
+import com.traven.kittylist.model.KittyDTO
 import retrofit2.http.GET
 import retrofit2.http.Query
 
 
-interface IApi {
+interface Iapi {
 
     @GET("search?")
     suspend fun getImgList(

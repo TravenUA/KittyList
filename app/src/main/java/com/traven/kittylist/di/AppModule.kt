@@ -2,7 +2,8 @@ package com.traven.kittylist.di
 
 import com.traven.kittylist.domain.Repository
 import com.traven.kittylist.Const
-import com.traven.kittylist.model.IApi
+import com.traven.kittylist.domain.Iapi
+import com.traven.kittylist.domain.Irepo
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -29,18 +30,18 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideAPI(client: OkHttpClient): IApi {
+    fun provideAPI(client: OkHttpClient): Iapi {
         return Retrofit.Builder()
             .baseUrl(Const.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .client(client)
             .build()
-            .create(IApi::class.java)
+            .create(Iapi::class.java)
     }
 
     @Singleton
     @Provides
-    fun providesRepository(api: IApi): Repository {
+    fun providesRepository(api: Iapi): Irepo {
         return Repository(api)
     }
 }

@@ -12,8 +12,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -40,7 +40,7 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.traven.kittylist.Const
 import com.traven.kittylist.R
-import com.traven.kittylist.model.dto.KittyDTO
+import com.traven.kittylist.model.KittyDTO
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -69,25 +69,12 @@ fun InitScreen() {
     }
 }
 
-
-@Composable
-fun ErrorMsg(snackbarHostState: SnackbarHostState) {
-    val scope = rememberCoroutineScope()
-
-    LaunchedEffect(scope) {
-        snackbarHostState.showSnackbar(
-            message = Const.MSG_ERR,
-            duration = SnackbarDuration.Short
-        )
-    }
-}
-
 @Composable
 fun ListScreen(viewModel: MyViewModel) {
     val list = viewModel.dataList
 
-    LazyColumn(Modifier.padding(10.dp), LazyListState()) {
-        if (list.isNotEmpty()) itemsIndexed(list)
+    LazyColumn(Modifier.padding(10.dp), rememberLazyListState()) {
+        if (list.isNotEmpty()) itemsIndexed(list, {_, item -> item.id})
         { idx, dto ->
             viewModel.updateScrollPosition(idx)
             ItemCard(dto)
@@ -112,6 +99,18 @@ fun ItemCard(kittyDTO: KittyDTO) {
                 contentScale = ContentScale.FillWidth,
             )
         }
+    }
+}
+
+@Composable
+fun ErrorMsg(snackbarHostState: SnackbarHostState) {
+    val scope = rememberCoroutineScope()
+
+    LaunchedEffect(scope) {
+        snackbarHostState.showSnackbar(
+            message = Const.MSG_ERR,
+            duration = SnackbarDuration.Short
+        )
     }
 }
 
@@ -141,5 +140,4 @@ fun NoInternetScreen() {
             textAlign = TextAlign.Center
         )
     }
-
 }
